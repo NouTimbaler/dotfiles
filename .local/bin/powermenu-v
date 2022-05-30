@@ -1,0 +1,11 @@
+#!/bin/sh
+
+
+case "$(printf "Poweroff\\nRestart\\nsLock\\nxtrLock" | dmenu -l 4 -i -p "Choose what to do:")" in
+	
+	"Poweroff") sudo -- poweroff -f ;;
+	"Restart")  sudo -- reboot -f ;;
+    "sLock")    slock -m "$(fortune)";;
+    "xtrLock")  xtrlock ;;
+
+esac

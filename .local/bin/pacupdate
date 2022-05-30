@@ -1,0 +1,12 @@
+#!/bin/sh
+
+
+doas pacman -Sy >/dev/null 2>/dev/null
+
+
+pkgs=$(pacman -Qu | grep -Fcv "[ignored]") 
+icon=" "
+
+
+echo "$icon$pkgs"
+

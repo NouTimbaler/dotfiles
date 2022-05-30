@@ -1,0 +1,47 @@
+#!/bin/sh
+
+# A dmenu prompt to unmount drives.
+# Provides you with mounted partitions, select one to unmount.
+# Drives mounted at /, /boot and /home will not be options to unmount.
+
+unmountusb() {
+	[ "$(echo -e "Sure\nCancel" | dmenu -i -l 5 -p "Unmount $choice?")" = "Sure" ] || exit 1
+	name_chosen="$(echo -e "$choice" | awk 'NF{NF-=2}1')"
+	chosen="$(echo "$choice" | awk '{print $NF}')"
+	echo $name_chosen
+	echo $chosen
+	[ -z "$chosen" ] && exit
+	sudo -A umount "$chosen" && notify-send "禍 USB unmounting" "$name_chosen unmounted."
+	}
+
+unmountandroid() { \
+	chosen="$(awk '/simple-mtpfs/ {print $2}' /etc/mtab | dmenu -i -l 5 -p "Unmount which device?")" || exit 1
+	[ -z "$chosen" ] && exit
+	sudo -A umount "$chosen" && notify-send " Android unmounting" "$chosen unmounted."
+	}
+
+askandroid() { \
+	choice="$(echo -e "Mount\nUnmount" | dmenu -i -l 5 -p "Mount or Unmount android device?")" || exit 1
+	case "$choice" in
+		"Mount") dmenumount -a ;;
+		"Unmount") unmountandroid ;;
+	esac
+	}
+asktype() { \
+	choice="$(echo -e "$drives" | dmenu -i -l 5)" || exit 1
+	case "$choice" in
+		"Mount new device") dmenumount -u ;;
+		"Android options") askandroid ;;
+		*) unmountusb ;;
+	esac
+	}
+
+
+mounted_drives=$(lsblk -nrpo "name,type,size,mountpoint,model" | awk -F':' '{gsub(/ /,":")}{if ($2 != "part"){name=$5}}{if ($2 != "disk" && $4 !~ /\/boot|\/efi|\/home$|SWAP/ && length($4)>1){printf "  禍   %s (%s) %s\n",name,$3,$4}}')
+drives="Mount new device"
+[ -n "$(simple-mtpfs -l 2>/dev/null)" ] && drives="$drives\nAndroid options"
+[ -n "$mounted_drives" ] && drives="$drives\n$mounted_drives"
+
+
+asktype
+

@@ -1,0 +1,2 @@
+#!/bin/sh
+feh --no-fehbg --bg-scale '/home/noutimbaler/Downloads/lake2.jpg' 

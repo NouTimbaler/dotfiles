@@ -1,0 +1,5 @@
+#!/bin/sh
+
+(xmonad --recompile && xmonad --restart && notify-send "System Management" "Compiled and restarted xmonad successfully" ) || \
+notify-send --urgency=critical "System Management" "Xmonad compilation failed - please fix errors"
+

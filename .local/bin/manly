@@ -1,0 +1,8 @@
+#!/bin/sh
+
+tmpfile=$(mktemp /tmp/manly.XXXXXX)
+
+man -k . | dmenu | awk '{print $1}' | xargs -r man -Tpdf >"$tmpfile"
+zathura "$tmpfile" &
+
+rm tmpfile

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+
+case "$(printf "Youtube\\nNetflix\\nReddit\\nGitlab\\nWhatsapp\\nFTN\\nUNSMail\\n1337x\\nDocumentation" | dmenu -l 9 -i -p "Choose a website:" )" in
+	
+	"Youtube") $BROWSER youtube.com ;;
+	"Netflix") $BROWSER netflix.com ;;
+	"Gitlab") $BROWSER gitlab.com/vojjvoda ;;
+	"Whatsapp") $BROWSER web.whatsapp.com ;;
+	"FTN") $BROWSER ftn.uns.ac.rs ;;
+	"ProtonMail") $BROWSER https://protonmail.com/ ;;
+	"Reddit") $BROWSER reddit.com ;;
+	"1337x") $BROWSER 1337x.to ;;
+  "Documentation") $BROWSER devdocs.io/c/ ;;
+
+esac
+
