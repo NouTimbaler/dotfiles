@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd "$HOME/.xmonad" && cabal build || exit
+ln -sfT "$(cabal list-bin xmonad)" "$1"
+
