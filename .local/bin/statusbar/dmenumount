@@ -1,0 +1,63 @@
+#!/bin/sh
+
+alias menuask='dmenu -m 0 -fn "-20" -i -bw 3 -x 610 -y 35 -z 900 -l 5'
+
+getmount() { \
+	[ -z "$chosen" ] && exit 1
+	mp="$(echo -e "$1" | menuask -p "Type in mount point.")" || exit 1
+	[ -z "$mp" ] && exit 1
+	if [ ! -d "$mp" ]; then
+		mkdiryn=$(printf "Cancel\\nSure" | menuask -p "$mp does not exist. Create it?") || exit 1
+		[ "$mkdiryn" = "Yes" ] && (mkdir -p "$mp" || sudo -A mkdir -p "$mp")
+	fi
+	}
+
+mountusb() { \
+	chosen="$(echo -e "$usb_drives" | menuask -p "Mount which drive?")" || exit 1
+	chosen="$(echo "$chosen" | awk '{print $1}')"
+	sudo -A mount "$chosen" 2>/dev/null && notify-send "  USB mounting" "$chosen mounted." && exit 0
+	getmount "/mnt\n/media\n/mount\n$HOME/media"
+	partitiontype="$(lsblk -no "fstype" "$chosen")"
+	case "$partitiontype" in
+		"vfat") sudo -A mount -t vfat "$chosen" "$mp" -o rw,umask=0000;;
+		"exfat") sudo -A mount "$chosen" "$mp" -o uid="$(id -u)",gid="$(id -g)";;
+		*) sudo -A mount "$chosen" "$mp"; user="$(whoami)"; ug="$(groups | awk '{print $1}')"; sudo -A chown "$user":"$ug" "$mp";;
+	esac
+	notify-send "  USB mounting" "$chosen\nmounted to\n$mp."
+	}
+
+mountandroid() { \
+	chosen="$(echo "$anddrives" | menuask -p "Which Android device?")" || exit 1
+	chosen="$(echo "$chosen" | cut -d : -f 1)"
+	getmount "$HOME/media"
+        simple-mtpfs --device "$chosen" "$mp"
+	echo "OK" | menuask -p "Tap Allow on your phone if it asks for permission and then press enter" || exit 1
+	simple-mtpfs --device "$chosen" "$mp"
+	notify-send " Android Mounting" "Android device mounted to $mp."
+	}
+
+asktype() { \
+        choice="$(echo -e "Mount USB\nMount Android" | menuask -p "Type of device to mount?")" || exit 1
+        case "$choice" in
+                "Mount USB") mountusb ;;
+                "Mount Android") mountandroid ;;
+                *) mountusb;;
+        esac
+        }
+
+anddrives=$(simple-mtpfs -l 2>/dev/null)
+
+usb_drives=$(lsblk -nrpo "name,type,size,mountpoint,model" | awk -F':' '{gsub(/ /,":")}{if ($2 != "part"){name=$5}}{if ($2 != "disk" && $4==""){printf "%s (%s) %s\n",$1,$3,name}}')
+
+
+
+if [ -z "$1" ]
+then
+	asktype
+else
+	case "$1" in
+		"-u") mountusb ;;
+		"-a") mountandroid ;;
+	esac
+fi
+

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+killall xmobar 
+#call xmobar build
+#($HOME/.config/xmobar/build "$HOME/.local/bin/xmobar" && notify-send "System Management" "Compiled and restarted Xmobar successfully" ) || notify-send --urgency=critical "System Management" "Xmobar compilation failed - please fix errors"
+
+#recompile xmonad
+(xmonad --recompile && xmonad --restart && notify-send "System Management" "Compiled and restarted Xmonad successfully" ) || \
+notify-send --urgency=critical "System Management" "Xmonad compilation failed - please fix errors"
+
