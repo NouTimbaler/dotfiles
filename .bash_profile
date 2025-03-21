@@ -4,7 +4,8 @@
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
-export PATH="$PATH:$HOME/.local/bin/:$HOME/.local/bin/statusbar:$HOME/.cabal/bin"
+
+export PATH="$PATH:$HOME/.local/bin/:$HOME/.local/bin/statusbar:$HOME/.cabal/bin:$HOME/.ghcup/bin"
 export TERMINAL="alacritty"
 export EDITOR="vim"
 export SUDO_ASKPASS="$HOME/.local/bin/dmenupass"

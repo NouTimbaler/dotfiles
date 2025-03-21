@@ -26,7 +26,7 @@ alias grep='grep --color=auto'
 #gcc warning and error colors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-alias git-config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
 # ghcup-env  -- commented out as it is in .xinitrc
 # [ -f "/home/noutimbaler/.ghcup/env" ] && source "/home/noutimbaler/.ghcup/env" 
