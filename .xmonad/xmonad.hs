@@ -424,9 +424,9 @@ myKeys =
     -- Multimedia Keys
     
         -- Sound
-        , ("<XF86AudioMute>",        spawn "pamixer -t")
-        , ("<XF86AudioLowerVolume>", spawn "pamixer --allow-boost -d 5")
-        , ("<XF86AudioRaiseVolume>", spawn "pamixer --allow-boost -i 5")
+        , ("<XF86AudioMute>",        spawn "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
+        , ("<XF86AudioLowerVolume>", spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")
+        , ("<XF86AudioRaiseVolume>", spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+")
 
         -- Brightness
         , ("<XF86MonBrightnessUp>",   spawn "xbacklight -inc 5")
