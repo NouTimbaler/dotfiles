@@ -1,0 +1,2 @@
+#!/bin/sh
+feh --no-fehbg --bg-max '/home/noutimbaler/.config/wallpapers/catwall3.jpg' --bg-max '/home/noutimbaler/.config/wallpapers/catwall.jpg'
