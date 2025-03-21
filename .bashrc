@@ -17,7 +17,7 @@ shopt -s checkwinsize              # update column value after each command
 
 #prompt
 color_prompt=yes
-PS1='[\u@\h \W]\$ '
+PS1='[\e[0;32m\u\e[0m@\e[0;33m\h\e[0m \e[0;36m\W\e[0m]\$ '
 
 #colors
 alias ls='ls --color=auto'

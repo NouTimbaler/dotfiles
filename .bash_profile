@@ -9,5 +9,5 @@ export TERMINAL="alacritty"
 export EDITOR="vim"
 export SUDO_ASKPASS="$HOME/.local/bin/dmenupass"
 
-xinput --map-to-output 12 "DP1"
+#xinput --map-to-output 12 "DP1"
 
