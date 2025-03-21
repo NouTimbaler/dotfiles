@@ -1,0 +1,6 @@
+packages: .
+
+packages xmobar
+    flags: +all_extensions
+
+constraints: xmobar +all_extensions
