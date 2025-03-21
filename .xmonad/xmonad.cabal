@@ -1,0 +1,13 @@
+cabal-version:       3.4
+name:                xmonad-timba
+version:             0.1.8
+
+executable xmonad
+  main-is:             xmonad.hs
+  build-depends:       base >= 4.13
+                     , xmonad >= 0.16
+                     , xmonad-contrib >= 0.16
+                     , directory
+                     , containers
+                    -- , filepath
+
