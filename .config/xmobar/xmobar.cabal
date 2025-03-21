@@ -1,0 +1,9 @@
+cabal-version:       3.4
+name:                xmobar-timba
+version:             0.1.8
+
+executable xmobar
+  main-is:             xmobar.hs
+  build-depends:       base
+                     , xmobar
+
