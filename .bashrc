@@ -17,7 +17,14 @@ shopt -s checkwinsize              # update column value after each command
 
 #prompt
 color_prompt=yes
-PS1='[\e[0;32m\u\e[0m@\e[0;33m\h\e[0m \e[0;36m\W\e[0m]\$ '
+
+GREEN="\[$(tput setaf 2)\]"
+YELLOW="\[$(tput setaf 3)\]"
+BLUE="\[$(tput setaf 4)\]"
+WHITE="\[$(tput setaf 7)\]"
+RESET="\[$(tput sgr0)\]"
+#PS1="[\e[0;32m\u\e[0m@\e[0;33m\h\e[0m \e[0;36m\W\e[0m]\$ "
+PS1="[${GREEN}\u${RESET}@${YELLOW}\h ${BLUE}\W${RESET}]\$ "
 
 #colors
 alias ls='ls --color=auto'
@@ -27,7 +34,4 @@ alias grep='grep --color=auto'
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
-
-# ghcup-env  -- commented out as it is in .xinitrc
-# [ -f "/home/noutimbaler/.ghcup/env" ] && source "/home/noutimbaler/.ghcup/env" 
 
