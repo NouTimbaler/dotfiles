@@ -1,0 +1,13 @@
+#!/bin/sh
+
+clipmenu 
+LINK=$(xsel -o)
+
+
+#case "$(printf "Stream\\nDownload\\nAudio_stream\\nAudio_download" dmenu -l 4 -i -p "What to do with video?" )" in
+case "$(printf "Stream\\nDownload" | dmenu -l 2 -i -p "What to do with video?" )" in
+
+	"Stream") mpv $LINK ;;
+	"Download") youtube-dl -f bestvideo+bestaudio --external-downloader aria2c --external-downloader-args '-c -j 3 -x 3 -s 3 -k 1M' $LINK ;;
+
+esac

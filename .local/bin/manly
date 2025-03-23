@@ -1,0 +1,10 @@
+#!/bin/sh
+
+tmpfile=$(mktemp /tmp/manly.XXXXXX)
+
+option="$(man -k . | dmenu -bw 3 -c -l 10 -fn "-15" -p "Search manual:")" || exit 1
+echo "$option" | awk '{print $1}' | xargs -r man -Tpdf >"$tmpfile"
+zathura "$tmpfile" &
+
+rm tmpfile
+
