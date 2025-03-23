@@ -3,16 +3,18 @@
 # Prints the current volume or 🔇 if muted.
 
 
-[ $(pamixer --get-mute) = true ] && echo "󰖁 " && exit
+vol="$(wpctl get-volume @DEFAULT_AUDIO_SINK@)"
+muted="$(echo $vol | cut -d ' ' -f3)"
+num="$(echo $vol | cut -d ' ' -f2 | cut -d '.' -f2)"
 
-vol="$(pamixer --get-volume)"
+[ $muted = "[MUTED]" ] && echo "󰖁 " && exit
 
-if [ "$vol" -gt "70" ]; then
+if [ "$num" -gt "70" ]; then
   icon=" "
-elif [ "$vol" -lt "30" ]; then
+elif [ "$num" -lt "30" ]; then
   icon=" "
 else
   icon=" "
 fi
 
-echo "$icon$vol%"
+echo "$icon$num%"
