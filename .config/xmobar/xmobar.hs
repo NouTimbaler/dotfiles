@@ -23,12 +23,12 @@ config =
                      , Run $ Com  "echo" ["<fn=0> \xf287 </fn>"] "usb" 360000
                      , Run $ Com  "echo" ["<fn=0>\xf030 </fn>"] "cam" 360000
 
-                     , Run $ Com  "/home/noutimbaler/.local/bin/statusbar/batinfo" [""] "bat" 50
-                     , Run $ Com  "/home/noutimbaler/.local/bin/statusbar/internet-down" [""] "down" 40
-                     , Run $ Com  "/home/noutimbaler/.local/bin/statusbar/int.sh" [""] "int" 5
-                     , Run $ Com  "/home/noutimbaler/.local/bin/statusbar/vol.sh" [""] "vol" 5
+                     , Run $ Com  "/home/ftodacas/.local/bin/statusbar/batinfo" [""] "bat" 50
+                     , Run $ Com  "/home/ftodacas/.local/bin/statusbar/internet-down" [""] "down" 40
+                     , Run $ Com  "/home/ftodacas/.local/bin/statusbar/int.sh" [""] "int" 5
+                     , Run $ Com  "/home/ftodacas/.local/bin/statusbar/vol.sh" [""] "vol" 5
                      , Run $ Date "\xf017 %2k:%M:%S" "date" 10
-                     , Run $ Com  "/home/noutimbaler/.local/bin/statusbar/systraypad.sh" ["stalonetray"] "tray" 10
+                     , Run $ Com  "/home/ftodacas/.local/bin/statusbar/systraypad.sh" ["stalonetray"] "tray" 10
 
                      ]
 
@@ -53,7 +53,7 @@ config =
                     \%right%\
 
                     \%left%\
-                        \%bat% \
+                        \%bat%\
                         \ <action='pavucontrol'>%vol%</action> \
                         \%date%\
                     \%right%\

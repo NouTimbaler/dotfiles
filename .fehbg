@@ -1,2 +1,2 @@
 #!/bin/sh
-feh --no-fehbg --bg-max '/home/ftodacas/.config/wallpapers/catwall.jpg' '/home/ftodacas/.config/wallpapers/berserkmoon.jpg' '/home/ftodacas/.config/wallpapers/catwall3.jpg' '/home/ftodacas/.config/wallpapers/beastinblack.jpg' '/home/ftodacas/.config/wallpapers/catwall2.jpg' '/home/ftodacas/.config/wallpapers/white.jpg' '/home/ftodacas/.config/wallpapers/berserkmark.jpg' 
+feh --no-fehbg --bg-max --randomize '/home/ftodacas/.config/wallpapers/catwall.jpg' '/home/ftodacas/.config/wallpapers/berserkmoon.jpg' '/home/ftodacas/.config/wallpapers/catwall3.jpg' '/home/ftodacas/.config/wallpapers/beastinblack.jpg' '/home/ftodacas/.config/wallpapers/catwall2.jpg' '/home/ftodacas/.config/wallpapers/white.jpg' '/home/ftodacas/.config/wallpapers/berserkmark.jpg' 

@@ -22,6 +22,6 @@ for battery in /sys/class/power_supply/BAT?*; do
 	[ "$status" = "norm" ] && [ "$capacity" -le 14 ] && status="󰁺" 
 	[ "$status" = "norm" ] && [ "$capacity" -le 9 ] && status="󰁺" && notify-send --urgency=critical "System Management" "Battery low."
 	# Prints the info
-	echo " $status $capacity%"
+	printf "%s%3s%s" "$status" "$capacity" "%"
 done && exit 0
 

@@ -106,7 +106,7 @@ file_manager :: String
 file_manager = terminal_emulator ++ " -e lf"               
 
 network_tool :: String
-network_tool = terminal_emulator ++ " -e sudo nmtui"
+network_tool = terminal_emulator ++ " -e nmtui"
 
 power_menu :: String
 power_menu = "powermenu-v"  
@@ -135,7 +135,7 @@ startWindowSetup = do
 myStartupHook :: X ()
 myStartupHook = do
 
-  --  spawnOnce "picom &"                      -- Transparency and stuff
+    spawnOnce "picom &"                      -- Transparency and stuff
     spawnOnce "setxkbmap es"                   -- Set es keyboard
     spawnOnce "~/.fehbg"                       -- Set the wallpaper 
     spawnOnce "unclutter"                    -- Remove mouse when idle
@@ -143,7 +143,6 @@ myStartupHook = do
     spawnOnce "dunst"                        -- Notifications
     spawnOnce "stalonetray"                    -- System tray
     startWindowSetup                           -- Set screen 2 to workspace 10
-    -- spawnOnce "fixStruts.sh"                   -- Fix Struts for xmobar on second monitor. DOES NOT WORK :(
 
     -- addScreenCorners [ (SCUpperLeft,  prevWS), (SCUpperRight, nextWS) ]
 
@@ -356,8 +355,9 @@ myKeys =
         , ("M-q",   kill1)     -- Kill the currently focused client
         , ("M-S-a", killAll)   -- Kill all windows on current workspace
 --------------------------------------------------------------
-
-
+    -- Lock Screen
+        , ("M-S-l",   spawn "slock")   -- slock screensaver
+--------------------------------------------------------------
 
 
 ---------------------------------------------------------------
@@ -427,10 +427,11 @@ myKeys =
         , ("<XF86AudioMute>",        spawn "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
         , ("<XF86AudioLowerVolume>", spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")
         , ("<XF86AudioRaiseVolume>", spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+")
+        , ("<XF86AudioMicMute>", spawn "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle")
 
         -- Brightness
-        , ("<XF86MonBrightnessUp>",   spawn "xbacklight -inc 5")
-        , ("<XF86MonBrightnessDown>", spawn "xbacklight -dec 5")
+        , ("<XF86MonBrightnessUp>",   spawn "sudo xbacklight -inc 5") -- add xbacklight to sudo NOPASSWD
+        , ("<XF86MonBrightnessDown>", spawn "sudo xbacklight -dec 5")
 
         -- Misc.
         , ("<XF86HomePage>", spawn (web_browser ++ " https://gitlab.com/vojjvoda") )

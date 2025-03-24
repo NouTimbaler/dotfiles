@@ -5,7 +5,7 @@
 
 vol="$(wpctl get-volume @DEFAULT_AUDIO_SINK@)"
 muted="$(echo $vol | cut -d ' ' -f3)"
-num="$(echo $vol | cut -d ' ' -f2 | cut -d '.' -f2)"
+num="$(echo $vol | awk '{ print int($2 * 100) }')"
 
 [ $muted = "[MUTED]" ] && echo "󰖁 " && exit
 
@@ -17,4 +17,4 @@ else
   icon=" "
 fi
 
-echo "$icon$num%"
+printf "%s%2s%s\n" "$icon" "$num" "%"
