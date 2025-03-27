@@ -1,11 +1,10 @@
 #!/bin/sh
 
-case "$(printf "Poweroff\\nRestart\\nLock" | dmenu -m 0 -fn "-20" -c -bw 3 -l 3 -i -p "Power option:")" in
+case "$(printf "Shut down\\nRestart\\nLock" | dmenu -m 0 -fn "-20" -bw 3 -l 3 -i -x 0 -y 35 -z 200)" in
 	
-	"Poweroff") sudo -- poweroff -f ;;
-	"Restart")  sudo -- reboot -f ;;
-    "sLock")    slock -m "$(fortune)";;
-    "xtrLock")  xtrlock ;;
+	"Poweroff") sudo poweroff ;;
+	"Restart")  sudo reboot ;;
+    "Lock")     slock ;;
 
 esac
 
