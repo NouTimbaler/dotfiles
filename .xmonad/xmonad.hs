@@ -23,7 +23,7 @@ import System.Exit (exitSuccess)
 import qualified XMonad.StackSet as W
 
     -- Actions
-import XMonad.Actions.CopyWindow (kill1)
+import XMonad.Actions.CopyWindow
 import XMonad.Actions.CycleWS (Direction1D(..), moveTo, shiftTo, WSType(..), nextScreen, prevScreen, prevWS, nextWS)
 import XMonad.Actions.MouseResize
 import XMonad.Actions.Promote
@@ -142,7 +142,7 @@ myStartupHook = do
     spawnOnce "xsetroot -cursor_name left_ptr" -- Change cursor outside windows
     spawnOnce "dunst"                        -- Notifications
     spawnOnce "stalonetray"                    -- System tray
-    startWindowSetup                           -- Set screen 2 to workspace 10
+    --startWindowSetup                           -- Set screen 2 to workspace 10
 
     -- addScreenCorners [ (SCUpperLeft,  prevWS), (SCUpperRight, nextWS) ]
 
@@ -242,11 +242,11 @@ myLayoutHook = avoidStruts $ T.toggleLayouts floats
 --- Workspaces
 -- ##################################################################
 
-myWorkspaces = map show [1..10]
+myWorkspaces = map show $ [1..9] ++ [0]
 
 clickable :: String -> String -> String
--- clickable s wsIcon = "<action=xdotool key super+" ++ s ++ ">" ++ wsIcon ++ "</action>"
-clickable s wsIcon = wsIcon -- not clickable
+clickable s wsIcon = "<action=xdotool key super+" ++ s ++ ">" ++ wsIcon ++ "</action>"
+-- clickable s wsIcon = wsIcon -- not clickable
 
 
 leftSep :: String
@@ -319,10 +319,13 @@ myKeys =
         , ("M-7",   changeWindow "7")
         , ("M-8",   changeWindow "8")
         , ("M-9",   changeWindow "9")
+        , ("M-0",   changeWindow "0")
+
+        , ("M-S-0", windows $ W.shift "0") -- workspace 10 shift window
         
     -- Make 2nd screen workspace work properly (workspace 10)
-        , ("M-0",   windows $ W.view "10")
-        , ("M-S-0", windows $ W.shift "10")
+    --    , ("M-0",   windows $ W.view "10")
+    --    , ("M-S-0", windows $ W.shift "10")
 
 
 --------------------------------------------------------------
@@ -332,8 +335,9 @@ myKeys =
         , ("M-c",   spawn "edit_confs.sh") -- conf editor
 --------------------------------------------------------------
 
-
-
+    -- Lock Screen
+        , ("M-S-l",   spawn "slock")   -- slock screensaver
+--------------------------------------------------------------
 
 
 ---------------------------------------------------------------
@@ -355,11 +359,8 @@ myKeys =
         , ("M-q",   kill1)     -- Kill the currently focused client
         , ("M-S-a", killAll)   -- Kill all windows on current workspace
 --------------------------------------------------------------
-    -- Lock Screen
-        , ("M-S-l",   spawn "slock")   -- slock screensaver
---------------------------------------------------------------
-
-
+    -- Sticky window
+        , ("M-z",   toggleSticky)   -- toggle copy current window to all workspaces
 ---------------------------------------------------------------
     -- Floating windows
         , ("M-S-f",   sendMessage (T.Toggle "float"))   -- Toggles 'floats' layout
@@ -427,7 +428,7 @@ myKeys =
         , ("<XF86AudioMute>",        spawn "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
         , ("<XF86AudioLowerVolume>", spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")
         , ("<XF86AudioRaiseVolume>", spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+")
-        , ("<XF86AudioMicMute>", spawn "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle")
+        , ("<XF86AudioMicMute>",     spawn "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle")
 
         -- Brightness
         , ("<XF86MonBrightnessUp>",   spawn "sudo xbacklight -inc 5") -- add xbacklight to sudo NOPASSWD
@@ -447,6 +448,13 @@ changeWindow :: String -> X()
 changeWindow i = do
     screenWorkspace 0 >>= flip whenJust (windows . W.view)
     windows $ W.view i
+
+toggleSticky :: X()
+toggleSticky = do
+    copies <- wsContainingCopies
+    if length copies > 1
+        then killAllOtherCopies
+        else windows copyToAll
 
           
 
