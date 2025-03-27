@@ -36,7 +36,7 @@ config =
         , alignSep = "}{"
 
 
-        , template = "<fc=#FFFFFF>%arch%</fc>\
+        , template = "<fc=#FFFFFF><action='powermenu-v'>%arch%</action></fc>\
                      \%left%<fn=3><fc=#FFFFFF,#555555> %UnsafeStdinReader%</fc></fn>%right%}\
 
                     \{<fn=0>\
