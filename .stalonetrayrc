@@ -20,6 +20,7 @@ background "#000000"
 decorations none
 
 # display <display name>     # as usual
+# display ":0"
 
 # dockapp_mode <mode>        # set dockapp mode, which can be either simple (for
                              # e.g. OpenBox, wmaker for WindowMaker, or none
@@ -44,7 +45,7 @@ geometry 1x1+1892+0
 grow_gravity NE
 
 # icon_gravity <gravity>     # icon placement gravity, one of NW, NE, SW, SE
-icon_gravity NW
+icon_gravity NE
 
 # icon_size <int>            # specifies dimensions of typical icon slot
 icon_size 28
@@ -71,7 +72,7 @@ kludges force_icons_size
 
 # max_geometry <geometry>    # maximal tray dimensions; 0 in width/height means
                              # no limit
-max_geometry 0x0
+max_geometry 0x28
 
 # no_shrink [<bool>]         # disables shrink-back mode
 no_shrink false

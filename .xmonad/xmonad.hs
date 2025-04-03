@@ -475,7 +475,7 @@ join (x:xs) = x ++ join xs
 
 main :: IO ()
 main = do
-    xmproc0 <- spawnPipe "xmobar -x 1 $HOME/.config/xmobar/xmobar.hs"
+    xmproc0 <- spawnPipe "xmobar -x 0 $HOME/.config/xmobar/xmobar.hs"
     -- xmproc1 <- spawnPipe "xmobar1 -x 0 $HOME/.config/xmobar/xmobar1.hs"
     xmonad $ docks $ ewmh def
         { manageHook         = ( isFullscreen --> doFullFloat ) <+> myManageHook <+> manageDocks
