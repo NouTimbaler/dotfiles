@@ -1,20 +1,3 @@
-
---------------------------------------------------------------------------------------------------
----      ___      ___ ________        ___  ___      ___ ________  ________  ________           ---
----     |\  \    /  /|\   __  \      |\  \|\  \    /  /|\   __  \|\   ___ \|\   __  \          ---
----     \ \  \  /  / | \  \|\  \     \ \  \ \  \  /  / | \  \|\  \ \  \_|\ \ \  \|\  \         ---
----      \ \  \/  / / \ \  \\\  \  __ \ \  \ \  \/  / / \ \  \\\  \ \  \ \\ \ \   __  \        ---
----       \ \    / /   \ \  \\\  \|\  \\_\  \ \    / /   \ \  \\\  \ \  \_\\ \ \  \ \  \       ---
----        \ \__/ /     \ \_______\ \________\ \__/ /     \ \_______\ \_______\ \__\ \__\      ---
----         \|__|/       \|_______|\|________|\|__|/       \|_______|\|_______|\|__|\|__|      ---
----                                                                                            ---
---------------------------------------------------------------------------------------------------
-
-
-
-
-
-
 -- Base
 import XMonad
 import System.Directory
@@ -75,22 +58,18 @@ import XMonad.Util.SpawnOnce
 
 
 
-
 -- ##################################################################
 --- My variables
 -- ##################################################################
 
 mod_mask :: KeyMask
-mod_mask = mod4Mask                                       -- Sets modkey to super/windows key
+mod_mask = mod4Mask                                 -- Sets modkey to super/windows key
 
 terminal_emulator :: String
 terminal_emulator = "alacritty "
 
 web_browser :: String
 web_browser = "firefox "
-
-rss_reader :: String
-rss_reader = terminal_emulator ++ " -e newsboat"    
 
 text_editor :: String
 text_editor = terminal_emulator ++ " -e vim "
@@ -101,9 +80,6 @@ normal_w_color = "#232323"                                -- Border color of nor
 
 focused_w_color :: String
 focused_w_color = "#FFFFFF"                               -- Border color of focused windows
-
-file_manager :: String
-file_manager = terminal_emulator ++ " -e lf"               
 
 network_tool :: String
 network_tool = terminal_emulator ++ " -e nmtui"
@@ -135,14 +111,14 @@ startWindowSetup = do
 myStartupHook :: X ()
 myStartupHook = do
 
-    spawnOnce "picom &"                      -- Transparency and stuff
-    spawnOnce "setxkbmap es"                   -- Set es keyboard
-    spawnOnce "~/.fehbg"                       -- Set the wallpaper 
-    spawnOnce "unclutter"                    -- Remove mouse when idle
-    spawnOnce "xsetroot -cursor_name left_ptr" -- Change cursor outside windows
-    spawnOnce "dunst"                        -- Notifications
-    spawnOnce "stalonetray"                    -- System tray
-    --startWindowSetup                           -- Set screen 2 to workspace 10
+    spawnOnce "picom &"                         -- Transparency and stuff
+    spawnOnce "setxkbmap es"                    -- Set es keyboard
+    spawnOnce "~/.fehbg"                        -- Set the wallpaper 
+    spawnOnce "unclutter"                       -- Remove mouse when idle
+    spawnOnce "xsetroot -cursor_name left_ptr"  -- Change cursor outside windows
+    spawnOnce "dunst"                           -- Notifications
+    spawnOnce "stalonetray"                     -- System tray
+    --startWindowSetup                            -- Set screen 2 to workspace 10
 
     -- addScreenCorners [ (SCUpperLeft,  prevWS), (SCUpperRight, nextWS) ]
 
@@ -292,8 +268,6 @@ myManageHook = composeAll
 
 
 
-
-
 -- ##################################################################
 --- Keybindings
 -- ##################################################################
@@ -323,10 +297,6 @@ myKeys =
 
         , ("M-S-0", windows $ W.shift "0") -- workspace 10 shift window
         
-    -- Make 2nd screen workspace work properly (workspace 10)
-    --    , ("M-0",   windows $ W.view "10")
-    --    , ("M-S-0", windows $ W.shift "10")
-
 
 --------------------------------------------------------------
     -- Dmenu Scripts
@@ -344,13 +314,10 @@ myKeys =
    -- Useful programs to have a keybinding for launch
         , ("M-<Return>", spawn (terminal_emulator))
         , ("M-w",        spawn (web_browser))
-        , ("M-S-w",      spawn (network_tool))  -- network tool
+        , ("M-S-w",      spawn (network_tool))
         , ("M-d",        spawn "dmenu_run -fn '-15' -c -l 5 -bw 3  -m 0 -p \"Run command:\"")
-        , ("M-r",        spawn (file_manager))
-        , ("M-n",        spawn (rss_reader))
         , ("M-S-p",      spawn (system_monitor))
 --------------------------------------------------------------
-
 
 
 
@@ -360,7 +327,7 @@ myKeys =
         , ("M-S-a", killAll)   -- Kill all windows on current workspace
 --------------------------------------------------------------
     -- Sticky window
-        , ("M-z",   toggleSticky)   -- toggle copy current window to all workspaces
+        , ("M-z",   toggleSticky)   -- toggle copy focused client to all workspaces
 ---------------------------------------------------------------
     -- Floating windows
         , ("M-S-f",   sendMessage (T.Toggle "float"))   -- Toggles 'floats' layout
@@ -434,10 +401,7 @@ myKeys =
         , ("<XF86MonBrightnessUp>",   spawn "sudo xbacklight -inc 5") -- add xbacklight to sudo NOPASSWD
         , ("<XF86MonBrightnessDown>", spawn "sudo xbacklight -dec 5")
 
-        -- Misc.
-        , ("<XF86HomePage>", spawn (web_browser ++ " https://gitlab.com/vojjvoda") )
-        , ("<XF86Mail>",     spawn (web_browser ++ " https://protonmail.com") )
-
+        -- Screenshots
         , ("<Print>",           spawn "maim -s | xclip -selection clipboard -t image/png")
         , ("M-<Print>",         spawn "screenshot.sh")
         ]
@@ -449,6 +413,7 @@ changeWindow i = do
     screenWorkspace 0 >>= flip whenJust (windows . W.view)
     windows $ W.view i
 
+-- Not really sticky. Just copies window to all workspaces
 toggleSticky :: X()
 toggleSticky = do
     copies <- wsContainingCopies
@@ -458,6 +423,10 @@ toggleSticky = do
 
           
 
+
+-- ##################################################################
+--- Helpers
+-- ##################################################################
 split :: String -> Char -> [String]
 split "" _ = []
 split xs c = let (ys, zs) = break (== c) xs
