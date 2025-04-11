@@ -253,13 +253,14 @@ myShowWNameTheme = def
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
 myManageHook = composeAll
      [ className =? "confirm"         --> doFloat
+     , resource =? "Dialog"           --> doFloat  -- Float Firefox Dialog
      , className =? "dialog"          --> doFloat
+     , isDialog                       --> doFloat
      , className =? "feh"             --> doFloat
      , title =? "Mozilla Firefox"     --> doShift ( "1" )
      , className =? "discord"         --> doShift ( "10" )
      , className =? "Spotify"         --> (className >>= io . appendFile "/home/noutimbaler/xmonad_debug" >> idHook)
      , className =? "Spotify"         --> doShift ( "10" )
-     , resource =? "Dialog"           --> doFloat  -- Float Firefox Dialog
      , title ^? "OpenGL"              --> doFloat
      , title ^? "Turtle"              --> doFloat
      , className =? "Threadscope"     --> doFloat
@@ -353,8 +354,9 @@ myKeys =
         , ("M-y",           windows W.focusMaster)  -- Move focus to the master window
         , ("M-j",           windows W.focusDown)    -- Move focus to the next window
         , ("M-k",           windows W.focusUp)      -- Move focus to the prev window
-        , ("M-<Tab>",       promote)                -- Moves focused window to master, others maintain order
-        , ("M-<Backspace>", rotAllDown)             -- Rotate all the windows in the current stack
+        , ("M-<Tab>",       windows W.focusDown)    -- Move focus to the next window
+        , ("M-<Backspace>", promote)                -- Moves focused window to master, others maintain order
+        --, ("M-<Backspace>", rotAllDown)             -- Rotate all the windows in the current stack
 --------------------------------------------------------------
 
 
