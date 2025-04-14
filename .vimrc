@@ -1,6 +1,6 @@
 " Vim configuration file
 
-" agda stuff
+" leader for extra maps
 let maplocalleader = ","
 
 " jump to next <++> mark
@@ -118,12 +118,12 @@ autocmd BufReadPost *
   \ | endif
 
 " automatically close stuff
-inoremap " ""<left>
-inoremap ' ''<left>
-inoremap ( ()<left>
-inoremap [ []<left>
-inoremap { {}<left>
-inoremap /* /**/<left><left>
+" inoremap " ""<left>
+" inoremap ' ''<left>
+" inoremap ( ()<left>
+" inoremap [ []<left>
+" inoremap { {}<left>
+" inoremap /* /**/<left><left>
 
 " disable automatic commenting on new line
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
