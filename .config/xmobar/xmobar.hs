@@ -15,7 +15,7 @@ config =
         , iconOffset = 0
 
         , commands = [ Run UnsafeStdinReader
-                     , Run $ Com  "echo" ["<fn=1> \xf303 </fn>"] "arch" 360000
+                     , Run $ Com  "echo" ["<fn=1> \xf35e </fn>"] "arch" 360000
 
                      , Run $ Com  "echo" ["<fn=2><fc=#555555>\xe0b2</fc></fn>"] "left" 360000
                      , Run $ Com  "echo" ["<fn=2><fc=#555555>\xe0b0</fc></fn>"] "right" 360000
