@@ -107,6 +107,8 @@ command! MakeTags !ctags -R .
 " BUILDING: (compiling) TODO:
 " look at makeprg 
 
+" do not truncate when writing long lines
+set tw=0
 " extra idk
 set backspace=indent,eol,start  " allow backspacing over everything
 set display=truncate " Show @@@ when truncate
