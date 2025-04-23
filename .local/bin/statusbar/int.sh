@@ -12,5 +12,10 @@ if grep -xq 'up' /sys/class/net/w*/operstate 2>/dev/null ; then
 
 fi
 
-printf "%s%s\n" "$(sed "s/down/󰈂/;s/up/󰈁/" /sys/class/net/e*/operstate 2>/dev/null)" "$(sed "s/.*//" /sys/class/net/tun*/operstate 2>/dev/null)"
+eth="󰈂"
+if grep -xq "up" /sys/class/net/e*/operstate 2>/dev/null ; then
+    eth="󰈁"
+fi
+
+printf "%s%s\n" "$eth" "$(sed "s/.*//" /sys/class/net/tun*/operstate 2>/dev/null)"
 
