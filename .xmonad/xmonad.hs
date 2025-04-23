@@ -20,6 +20,7 @@ import Data.Maybe (fromJust, isJust)
 import Data.Monoid
 import Data.Tree
 import qualified Data.Map as M
+import Data.List
 
     -- Hooks
 import XMonad.Hooks.DynamicLog (dynamicLogWithPP, wrap, xmobarPP, xmobarColor, shorten, PP(..))
@@ -54,6 +55,7 @@ import XMonad.Util.EZConfig (additionalKeysP)
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run (runProcessWithInput, safeSpawn, spawnPipe)
 import XMonad.Util.SpawnOnce
+import qualified XMonad.Util.ExtensibleState as XS
 
 
 
@@ -256,11 +258,10 @@ myManageHook = composeAll
      , resource =? "Dialog"           --> doFloat  -- Float Firefox Dialog
      , className =? "dialog"          --> doFloat
      , isDialog                       --> doFloat
+ --    , isInProperty "_NET_WM_WINDOW_TYPE" "_NET_WM_WINDOW_TYPE_UTILITY" --> doFloat -- Picture-in-picture
+     , isInProperty "_NET_WM_STATE" "_NET_WM_STATE_ABOVE" --> doFloat
+     , isInProperty "_NET_WM_STATE" "_NET_WM_STATE_ABOVE" --> (ask >>= makeSticky)
      , className =? "feh"             --> doFloat
-     , title =? "Mozilla Firefox"     --> doShift ( "1" )
-     , className =? "discord"         --> doShift ( "10" )
-     , className =? "Spotify"         --> (className >>= io . appendFile "/home/noutimbaler/xmonad_debug" >> idHook)
-     , className =? "Spotify"         --> doShift ( "10" )
      , title ^? "OpenGL"              --> doFloat
      , title ^? "Turtle"              --> doFloat
      , className =? "Threadscope"     --> doFloat
@@ -302,8 +303,9 @@ myKeys =
 --------------------------------------------------------------
     -- Dmenu Scripts
         , ("M-p",   spawn (power_menu))    -- power menu
-        , ("M-m",   spawn "manly")         -- open man page as pdf
+        , ("M-n",   spawn "manly")         -- open man page as pdf
         , ("M-c",   spawn "edit_confs.sh") -- conf editor
+        , ("M-m",   spawn "display-v")     -- premade xrandr configs
 --------------------------------------------------------------
 
     -- Lock Screen
@@ -328,7 +330,7 @@ myKeys =
         , ("M-S-a", killAll)   -- Kill all windows on current workspace
 --------------------------------------------------------------
     -- Sticky window
-        , ("M-z",   toggleSticky)   -- toggle copy focused client to all workspaces
+        , ("M-z",  toggleSticky)   -- make focused window sticky
 ---------------------------------------------------------------
     -- Floating windows
         , ("M-S-f",   sendMessage (T.Toggle "float"))   -- Toggles 'floats' layout
@@ -395,8 +397,8 @@ myKeys =
     
         -- Sound
         , ("<XF86AudioMute>",        spawn "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
-        , ("<XF86AudioLowerVolume>", spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")
-        , ("<XF86AudioRaiseVolume>", spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+")
+        , ("<XF86AudioLowerVolume>", spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 4%-")
+        , ("<XF86AudioRaiseVolume>", spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 3%+")
         , ("<XF86AudioMicMute>",     spawn "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle")
 
         -- Brightness
@@ -412,18 +414,10 @@ myKeys =
 -- helper for changing windows
 changeWindow :: String -> X()
 changeWindow i = do
+    shiftSticky i
     screenWorkspace 0 >>= flip whenJust (windows . W.view)
     windows $ W.view i
 
--- Not really sticky. Just copies window to all workspaces
-toggleSticky :: X()
-toggleSticky = do
-    copies <- wsContainingCopies
-    if length copies > 1
-        then killAllOtherCopies
-        else windows copyToAll
-
-          
 
 
 -- ##################################################################
@@ -440,9 +434,43 @@ join (x:xs) = x ++ join xs
 
 
 -- ##################################################################
+--- State monad for sticky windows and more
+-- ##################################################################
+data StateStorage = StateStorage [Window] deriving (Read, Show)
+instance ExtensionClass StateStorage where
+  initialValue = StateStorage []
+
+shiftSticky :: String -> X()
+shiftSticky i = do
+    StateStorage ss <- XS.get
+    mapM_ (windows . W.shiftWin i) ss 
+
+
+toggleSticky :: X()
+toggleSticky = do
+    ws <- gets windowset
+    let mf = W.peek ws
+    case mf of
+        Nothing -> return ()
+        Just f -> do
+            StateStorage ss <- XS.get
+            case elem f ss of
+                True -> XS.put $ StateStorage $ delete f ss
+                False -> XS.put $ StateStorage $ f:ss
+
+
+makeSticky :: Window -> Query(Endo WindowSet)
+makeSticky w = liftX $ do
+    StateStorage ss <- XS.get
+    case elem w ss of
+        True -> return idHook
+        False -> do
+            XS.put $ StateStorage $ w:ss
+            return idHook
+
+-- ##################################################################
 --- Main func, also xmobar handling
 -- ##################################################################
-
 
 main :: IO ()
 main = do
