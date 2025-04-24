@@ -260,8 +260,9 @@ myManageHook = composeAll
      , isDialog                       --> doFloat
  --    , isInProperty "_NET_WM_WINDOW_TYPE" "_NET_WM_WINDOW_TYPE_UTILITY" --> doFloat -- Picture-in-picture
      , isInProperty "_NET_WM_STATE" "_NET_WM_STATE_ABOVE" --> doFloat
-     , isInProperty "_NET_WM_STATE" "_NET_WM_STATE_ABOVE" --> (ask >>= makeSticky)
+     , isInProperty "_NET_WM_STATE" "_NET_WM_STATE_ABOVE" --> (ask >>= \w -> liftX $ makeSticky w >> mempty)
      , className =? "feh"             --> doFloat
+     , className =? "stalonetray"     --> doSink
      , title ^? "OpenGL"              --> doFloat
      , title ^? "Turtle"              --> doFloat
      , className =? "Threadscope"     --> doFloat
@@ -448,25 +449,16 @@ shiftSticky i = do
 
 toggleSticky :: X()
 toggleSticky = do
-    ws <- gets windowset
-    let mf = W.peek ws
-    case mf of
-        Nothing -> return ()
-        Just f -> do
-            StateStorage ss <- XS.get
-            case elem f ss of
-                True -> XS.put $ StateStorage $ delete f ss
-                False -> XS.put $ StateStorage $ f:ss
-
-
-makeSticky :: Window -> Query(Endo WindowSet)
-makeSticky w = liftX $ do
     StateStorage ss <- XS.get
-    case elem w ss of
-        True -> return idHook
-        False -> do
-            XS.put $ StateStorage $ w:ss
-            return idHook
+    withFocused $ \f -> 
+        case elem f ss of
+            True -> XS.put $ StateStorage $ delete f ss
+            False -> XS.put $ StateStorage $ f:ss
+
+makeSticky :: Window -> X()
+makeSticky w = do
+    StateStorage ss <- XS.get
+    whenX (return $ elem w ss) $ XS.put $ StateStorage $ w:ss
 
 -- ##################################################################
 --- Main func, also xmobar handling
