@@ -64,7 +64,7 @@ set termguicolors
 colorscheme desert
 
 " copy and paste
-vnoremap <C-c> "+y
+noremap <C-c> "+y
 map <C-p> "+P
 
 " autocomplete
