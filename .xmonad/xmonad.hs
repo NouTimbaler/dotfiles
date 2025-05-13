@@ -1,5 +1,6 @@
 -- Base
 import XMonad
+import XMonad.Prelude
 import System.Directory
 import System.IO (hPutStrLn)
 import System.Exit (exitSuccess)
@@ -31,6 +32,7 @@ import XMonad.Hooks.SetWMName
 import XMonad.Hooks.ScreenCorners
 import XMonad.Hooks.FadeInactive
 import XMonad.Hooks.StatusBar.PP
+import XMonad.Hooks.WindowSwallowing
 
     -- Layouts
 import XMonad.Layout.SimplestFloat
@@ -317,6 +319,7 @@ myKeys =
 ---------------------------------------------------------------
    -- Useful programs to have a keybinding for launch
         , ("M-<Return>", spawn (terminal_emulator))
+        , ("M-S-<Return>", spawn (terminal_emulator ++ "-e uru"))
         , ("M-w",        spawn (web_browser))
         , ("M-S-w",      spawn (network_tool))
         , ("M-d",        spawn "dmenu_run -fn '-15' -c -l 5 -bw 3  -m 0 -p \"Run command:\"")
@@ -415,10 +418,8 @@ myKeys =
 -- helper for changing windows
 changeWindow :: String -> X()
 changeWindow i = do
-    shiftSticky i
     screenWorkspace 0 >>= flip whenJust (windows . W.view)
     windows $ W.view i
-
 
 
 -- ##################################################################
@@ -429,36 +430,59 @@ split "" _ = []
 split xs c = let (ys, zs) = break (== c) xs
              in  if null zs then [ys] else ys : split (tail zs) c
 
-join :: [String] -> String
-join [] = ""
-join (x:xs) = x ++ join xs
+joins :: [String] -> String
+joins [] = ""
+joins (x:xs) = x ++ joins xs
 
 
 -- ##################################################################
---- State monad for sticky windows and more
+--- Sticky windows hook and helpers
 -- ##################################################################
-data StateStorage = StateStorage [Window] deriving (Read, Show)
+data StateStorage = 
+    StateStorage { oldWorkspace :: String 
+                 , sticked      :: [Window]
+                 } deriving (Read, Show)
 instance ExtensionClass StateStorage where
-  initialValue = StateStorage []
+  initialValue = StateStorage { oldWorkspace = ""
+                              , sticked      = []
+                              }
 
 shiftSticky :: String -> X()
 shiftSticky i = do
-    StateStorage ss <- XS.get
+    ss <- XS.gets sticked
     mapM_ (windows . W.shiftWin i) ss 
 
 
 toggleSticky :: X()
 toggleSticky = do
-    StateStorage ss <- XS.get
+    ss <- XS.gets sticked
     withFocused $ \f -> 
         case elem f ss of
-            True -> XS.put $ StateStorage $ delete f ss
-            False -> XS.put $ StateStorage $ f:ss
+            True -> XS.modify $ \s -> s { sticked = delete f ss }
+            False -> XS.modify $ \s -> s { sticked = f:ss }
 
 makeSticky :: Window -> X()
 makeSticky w = do
-    StateStorage ss <- XS.get
-    whenX (return $ elem w ss) $ XS.put $ StateStorage $ w:ss
+    ss <- XS.gets sticked
+    unless (elem w ss) $ XS.modify $ \s -> s { sticked = w:ss }
+
+stickyEventHook :: Event -> X All
+stickyEventHook event = do
+    ss    <- XS.gets sticked
+    oldws <- XS.gets oldWorkspace
+    case event of
+        DestroyWindowEvent { ev_event = eventId, ev_window = w } -> do
+            when (eventId == w) $ do
+                XS.modify $ \s -> s { sticked = delete w ss }
+        PropertyEvent { ev_window = w, ev_atom = a } -> do
+            ws <- gets (W.tag . W.workspace . W.current . windowset)
+            when (ws /= oldws) $ do
+                XS.modify $ \s -> s { oldWorkspace = ws }
+                shiftSticky ws
+                --spawn $ "echo \"Workspace: " ++ ws ++ "\" >> /tmp/xmonad.log"
+            return ()
+        _ -> return ()
+    return $ All True
 
 -- ##################################################################
 --- Main func, also xmobar handling
@@ -470,6 +494,7 @@ main = do
     -- xmproc1 <- spawnPipe "xmobar1 -x 0 $HOME/.config/xmobar/xmobar1.hs"
     xmonad $ docks $ ewmh def
         { manageHook         = ( isFullscreen --> doFullFloat ) <+> myManageHook <+> manageDocks
+        , handleEventHook    = swallowEventHook (className =? "Alacritty") (return True) <+> stickyEventHook
         , modMask            = mod_mask
         , terminal           = terminal_emulator
         , startupHook        = myStartupHook
@@ -485,7 +510,7 @@ main = do
                                             let a = split s '^'
                                             let ws = a !! 0
                                             let lay = a !! 1
-                                            let tit = (join . tail . tail) a
+                                            let tit = (joins . tail . tail) a
                                             hPutStrLn xmproc0 ( ws ++ lay )
 --                                            hPutStrLn xmproc1 tit
 
