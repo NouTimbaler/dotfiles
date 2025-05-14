@@ -479,6 +479,7 @@ stickyEventHook event = do
             when (ws /= oldws) $ do
                 XS.modify $ \s -> s { oldWorkspace = ws }
                 shiftSticky ws
+                promote -- hacky way to focus the old focused window
                 --spawn $ "echo \"Workspace: " ++ ws ++ "\" >> /tmp/xmonad.log"
             return ()
         _ -> return ()
